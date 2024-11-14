@@ -2,13 +2,16 @@ class ScraperArticleContentJob < ApplicationJob
   queue_as :default
 
   def perform(source_url, article_link)
-    scraper = Scrapers::ScraperFactory.create_scraper(source_url)
+    scraper = Services::ScraperFactory.create_scraper(source_url)
 
-    content = scraper.scrape_page_content(article_link)
+    source = Source.find_by(link: source_url)
+    source_id = source.id if source
+
+    content = scraper.scrape_page_content(article_link, source_id)
 
     filename = "article_#{Digest::MD5.hexdigest(article_link)}.txt"
 
-    File.open(Rails.root.join(filename), "w") do |file|
+    File.open(Rails.root.join(filename), 'w') do |file|
       file.puts "URL: #{article_link}"
       file.puts content
     end
