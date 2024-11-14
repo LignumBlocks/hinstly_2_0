@@ -7,14 +7,7 @@ class ScraperArticleContentJob < ApplicationJob
     source = Source.find_by(link: source_url)
     source_id = source.id if source
 
-    content = scraper.scrape_page_content(article_link, source_id)
-
-    filename = "article_#{Digest::MD5.hexdigest(article_link)}.txt"
-
-    File.open(Rails.root.join(filename), 'w') do |file|
-      file.puts "URL: #{article_link}"
-      file.puts content
-    end
+    scraper.scrape_page_content(article_link, source_id)
 
     Rails.logger.info "ScraperArticleContentJob: Contenido procesado para #{article_link}"
   rescue StandardError => e

@@ -5,7 +5,7 @@ class ScraperLinkJob < ApplicationJob
     scraper = Services::ScraperFactory.create_scraper(url)
     max_pages = scraper.max_pages
 
-    (1..1).each do |page_number|
+    (1..max_pages).each do |page_number|
       ScraperPageJob.perform_later(url, page_number)
     end
 
